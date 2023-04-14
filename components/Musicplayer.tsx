@@ -25,14 +25,30 @@ import TrackPlayer, {
   Capability,
   RepeatMode,
   Event,
+  useProgress,
 } from 'react-native-track-player';
 interface Istate {
-  isDark: boolean;
+  appearance: boolean;
+  isPlaying: boolean;
+  isModalOpen: boolean;
+  trackArtwork: null;
+  trackTitle: null;
+  trackArtist: null;
+  currentMusicImg: string;
+  duration: number;
+  progress: number;
+}
+interface Iprops{
+
 }
 let isThemeDark = Appearance.getColorScheme() === 'dark';
 
-class Musicplayer extends Component<Istate> {
-  constructor(props) {
+class Musicplayer extends Component<Iprops,Istate> {
+
+  
+  progressInterval: number | undefined;
+
+  constructor(props:Iprops) {
     super(props);
     this.state = {
       appearance: isThemeDark,
@@ -48,28 +64,40 @@ class Musicplayer extends Component<Istate> {
     };
   }
 
-  componentDidMount(): void {
+  async componentDidMount(): Promise<void> {
     console.log(isThemeDark);
 
     Appearance.addChangeListener(list => {
       isThemeDark = list.colorScheme === 'dark';
       this.setState({appearance: isThemeDark});
     });
-    TrackPlayer.setupPlayer().then(() => {
+    try{
+    await TrackPlayer.setupPlayer().then(() => {
       TrackPlayer.add(JsonData);
-
+   
       TrackPlayer.addEventListener(
         'playback-track-changed',
         this.onTrackChange,
       );
     });
-    TrackPlayer.getDuration().then(duration => this.setState({duration}));
+    
+    await TrackPlayer.setRepeatMode(RepeatMode.Queue);
+    await TrackPlayer.getDuration().then(duration => this.setState({duration}));
     this.progressInterval = setInterval(this.getProgress, 1000);
-  }
 
+  }catch(error){
+    console.log(error,'error')
+  }
+    
+  }
+ 
+ 
   componentWillUnmount(): void {
     TrackPlayer.addEventListener('playback-track-changed', this.onTrackChange);
     clearInterval(this.progressInterval);
+
+ 
+    
   }
 
   playTrack = async () => {
@@ -93,7 +121,7 @@ class Musicplayer extends Component<Istate> {
       await TrackPlayer.seekTo(0);
     }
   };
-  onTrackChange = async track => {
+  onTrackChange = async (track: { nextTrack: number; }) => {
     const {artwork, artist, title, length} = await TrackPlayer.getTrack(
       track.nextTrack,
     );
@@ -110,22 +138,31 @@ class Musicplayer extends Component<Istate> {
     this.setState({progress: position});
   };
 
-  onSliderValueChange = async value => {
+  onSliderValueChange = async (value: number) => {
     await TrackPlayer.seekTo(value);
     this.setState({progress: value});
   };
 
-  handlesongPress = async index => {
+  handlesongPress = async (index: number) => {
     await TrackPlayer.skip(index);
   };
-  format = seconds => {
+  format = (seconds: number) => {
     let mins = parseInt(seconds / 60)
       .toString()
       .padStart(2, '0');
     let secs = (Math.trunc(seconds) % 60).toString().padStart(2, '0');
     return `${mins}:${secs}`;
   };
+ formatTime = secs => {
+    let minutes = Math.floor(secs / 60);
+    let seconds = Math.ceil(secs - minutes * 60);
 
+    if (seconds < 10) {
+      seconds = `0${seconds}`;
+    }
+
+    return `${minutes}:${seconds}`;
+  };
   render() {
     const {
       appearance,
@@ -333,8 +370,8 @@ class Musicplayer extends Component<Istate> {
                 minimumValue={0}
                 maximumValue={duration}
                 value={progress}
-                minimumTrackTintColor="#FFFFFF"
-                maximumTrackTintColor="#000000"
+                minimumTrackTintColor={appearance ? '#ECECEC' : '#212121'}
+                maximumTrackTintColor={appearance ? '#ECECEC' : '#212121'}
                 onSlidingComplete={this.onSliderValueChange}
               />
             </View>
@@ -467,8 +504,8 @@ class Musicplayer extends Component<Istate> {
                   minimumValue={0}
                   maximumValue={duration}
                   value={progress}
-                  minimumTrackTintColor="#FFFFFF"
-                  maximumTrackTintColor="#000000"
+                  minimumTrackTintColor={appearance ? '#ECECEC' : '#212121'}
+                  maximumTrackTintColor={appearance ? '#ECECEC' : '#212121'}
                   onSlidingComplete={this.onSliderValueChange}
                 />
               </View>
@@ -478,8 +515,22 @@ class Musicplayer extends Component<Istate> {
                   justifyContent: 'space-between',
                   marginHorizontal: 25,
                 }}>
-                <Text>{this.format(progress)}</Text>
-                <Text>{this.format(duration)}</Text>
+                <Text
+                  style={{
+                    color: appearance ? '#ECECEC' : '#212121',
+                    fontSize: 15,
+                  }}>
+                  {/* {this.format(progress)} */}
+                  {this.formatTime( progress)}
+                </Text>
+                <Text
+                  style={{
+                    color: appearance ? '#ECECEC' : '#212121',
+                    fontSize: 15,
+                  }}>
+                  {/* {this.format(duration)} */}
+                  {this.formatTime(duration)}
+                </Text>
               </View>
               <View
                 style={{

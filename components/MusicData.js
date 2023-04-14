@@ -5,7 +5,7 @@ export const JsonData = [
       artwork: 'https://samplesongs.netlify.app/album-arts/death-bed.jpg',
       url: 'https://samplesongs.netlify.app/Death%20Bed.mp3',
       id: '1',
-      length: 151,
+      length: 2 * 60 + 54,
     },
     {
       title: 'Bad Liar',
@@ -13,7 +13,7 @@ export const JsonData = [
       artwork: 'https://samplesongs.netlify.app/album-arts/bad-liar.jpg',
       url: 'https://samplesongs.netlify.app/Bad%20Liar.mp3',
       id: '2',
-      length: 252,
+      length:4 * 60+21,
     },
     {
       title: 'Faded',
@@ -21,7 +21,7 @@ export const JsonData = [
       artwork: 'https://samplesongs.netlify.app/album-arts/faded.jpg',
       url: 'https://samplesongs.netlify.app/Faded.mp3',
       id: '3',
-      length: 199,
+      length: 3 * 60+33,
     },
     {
       title: 'Hate Me',
@@ -29,7 +29,7 @@ export const JsonData = [
       artwork: 'https://samplesongs.netlify.app/album-arts/hate-me.jpg',
       url: 'https://samplesongs.netlify.app/Hate%20Me.mp3',
       id: '4',
-      length: 183,
+      length: 3 * 60+7,
     },
     {
       title: 'Solo',
@@ -37,7 +37,7 @@ export const JsonData = [
       artwork: 'https://samplesongs.netlify.app/album-arts/solo.jpg',
       url: 'https://samplesongs.netlify.app/Solo.mp3',
       id: '5',
-      length: 205,
+      length: 3 * 60+43,
     },
     {
       title: 'Without Me',
@@ -45,7 +45,7 @@ export const JsonData = [
       artwork: 'https://samplesongs.netlify.app/album-arts/without-me.jpg',
       url: 'https://samplesongs.netlify.app/Without%20Me.mp3',
       id: '6',
-      length: 208,
+      length: 3 * 60+49,
     },
     
     
